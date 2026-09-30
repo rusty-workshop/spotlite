@@ -140,6 +140,9 @@ fun SpotliteNavHost(
                 nowPlaying = nowPlaying,
                 onTogglePlayPause = { container.playbackController.togglePlayPause() },
                 onSkipNext = { container.playbackController.skipNext() },
+                onSkipPrevious = { container.playbackController.skipPrevious() },
+                onToggleShuffle = { container.playbackController.toggleShuffle() },
+                onCycleRepeat = { container.playbackController.cycleRepeatMode() },
                 onOpenQueue = { navController.navigate(Routes.QUEUE) },
                 onSeek = { container.playbackController.seekTo(it) },
             )

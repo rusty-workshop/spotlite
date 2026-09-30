@@ -1,5 +1,8 @@
 package com.rusty.spotlite.ui.library
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rusty.spotlite.repo.LibraryRepository
@@ -9,9 +12,18 @@ import com.rusty.spotlite.ui.common.offsetPager
 import kotlinx.coroutines.launch
 
 class LibraryViewModel(
-    repository: LibraryRepository,
+    private val repository: LibraryRepository,
     val savedTracksStore: SavedTracksStore,
 ) : ViewModel() {
+
+    var displayName by mutableStateOf<String?>(null)
+        private set
+
+    init {
+        viewModelScope.launch {
+            displayName = runCatching { repository.displayName() }.getOrNull()
+        }
+    }
 
     val playlists = offsetPager(viewModelScope) { offset ->
         repository.loadPlaylists(offset).let { it.items to it.nextOffset }

@@ -13,6 +13,9 @@ import com.spotify.protocol.types.Image
 import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.PlayerState
 
+/** Matches the Web API's repeat_state values (off/context/track), which App Remote mirrors as 0/1/2. */
+enum class RepeatMode { OFF, ALL, ONE }
+
 data class NowPlaying(
     val trackUri: String,
     val trackName: String,
@@ -25,6 +28,8 @@ data class NowPlaying(
     val positionMs: Long = 0,
     val durationMs: Long = 0,
     val positionUpdatedAtMs: Long = System.currentTimeMillis(),
+    val isShuffling: Boolean = false,
+    val repeatMode: RepeatMode = RepeatMode.OFF,
 )
 
 /**
@@ -118,6 +123,22 @@ class PlaybackController(private val context: Context) {
         )
     }
 
+    fun toggleShuffle() {
+        val newValue = !(nowPlaying?.isShuffling ?: false)
+        appRemote?.playerApi?.setShuffle(newValue)
+        nowPlaying = nowPlaying?.copy(isShuffling = newValue)
+    }
+
+    fun cycleRepeatMode() {
+        val next = when (nowPlaying?.repeatMode ?: RepeatMode.OFF) {
+            RepeatMode.OFF -> RepeatMode.ALL
+            RepeatMode.ALL -> RepeatMode.ONE
+            RepeatMode.ONE -> RepeatMode.OFF
+        }
+        appRemote?.playerApi?.setRepeat(next.ordinal)
+        nowPlaying = nowPlaying?.copy(repeatMode = next)
+    }
+
     // Tracks which track's art is already loaded/loading so a slow fetch for a track the
     // user has since skipped past can't land late and overwrite the current one's art.
     private var artLoadedForTrackUri: String? = null
@@ -137,6 +158,8 @@ class PlaybackController(private val context: Context) {
                 positionMs = state.playbackPosition,
                 durationMs = track.duration,
                 positionUpdatedAtMs = System.currentTimeMillis(),
+                isShuffling = state.playbackOptions?.isShuffling ?: false,
+                repeatMode = RepeatMode.entries.getOrElse(state.playbackOptions?.repeatMode ?: 0) { RepeatMode.OFF },
             )
             if (track != null && track.imageUri != null && artLoadedForTrackUri != track.uri) {
                 loadAlbumArt(remote, track.uri, track.imageUri)

@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -47,7 +48,18 @@ fun LibraryScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
         TopAppBar(
-            title = { Text("Spotlite") },
+            title = {
+                Column {
+                    Text("Spotlite")
+                    viewModel.displayName?.let { name ->
+                        Text(
+                            text = "Hi, $name",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        )
+                    }
+                }
+            },
             actions = {
                 IconButton(onClick = onOpenSearch) {
                     Icon(Icons.Filled.Search, contentDescription = "Search")

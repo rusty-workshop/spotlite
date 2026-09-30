@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.RepeatOne
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rusty.spotlite.remote.NowPlaying
+import com.rusty.spotlite.remote.RepeatMode
 import kotlinx.coroutines.delay
 
 // A static shape + Surface elevation reads as a "card floating above the list" for the
@@ -52,6 +58,9 @@ fun NowPlayingBar(
     nowPlaying: NowPlaying,
     onTogglePlayPause: () -> Unit,
     onSkipNext: () -> Unit,
+    onSkipPrevious: () -> Unit,
+    onToggleShuffle: () -> Unit,
+    onCycleRepeat: () -> Unit,
     onOpenQueue: () -> Unit,
     onSeek: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -89,8 +98,32 @@ fun NowPlayingBar(
                         contentDescription = if (nowPlaying.isPaused) "Play" else "Pause",
                     )
                 }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = onToggleShuffle) {
+                    Icon(
+                        Icons.Filled.Shuffle,
+                        contentDescription = if (nowPlaying.isShuffling) "Shuffle on" else "Shuffle off",
+                        tint = if (nowPlaying.isShuffling) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                IconButton(onClick = onSkipPrevious) {
+                    Icon(Icons.Filled.SkipPrevious, contentDescription = "Previous")
+                }
                 IconButton(onClick = onSkipNext) {
                     Icon(Icons.Filled.SkipNext, contentDescription = "Skip")
+                }
+                IconButton(onClick = onCycleRepeat) {
+                    Icon(
+                        if (nowPlaying.repeatMode == RepeatMode.ONE) Icons.Filled.RepeatOne else Icons.Filled.Repeat,
+                        contentDescription = "Repeat: ${nowPlaying.repeatMode.name.lowercase()}",
+                        tint = if (nowPlaying.repeatMode != RepeatMode.OFF) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
                 IconButton(onClick = onOpenQueue) {
                     Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = "Queue")
