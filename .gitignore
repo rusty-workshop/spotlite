@@ -1,0 +1,17 @@
+/app/build/
+/app/release/
+/build/
+/captures/
+.cxx/
+.DS_Store
+.externalNativeBuild/
+.gradle/
+*.hprof
+/.idea/
+*.iml
+local.properties
+.kotlin/
+
+# Spotify's App Remote AAR is fetched by hand (see app/libs/README.md) and its
+# distribution terms are Spotify's, not ours — keep it out of the repo.
+/app/libs/*.aar

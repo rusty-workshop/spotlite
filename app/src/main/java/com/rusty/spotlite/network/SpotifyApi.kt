@@ -1,0 +1,61 @@
+package com.rusty.spotlite.network
+
+import com.rusty.spotlite.model.FollowedArtistsResponse
+import com.rusty.spotlite.model.PagingObject
+import com.rusty.spotlite.model.PlaylistTrackItem
+import com.rusty.spotlite.model.SavedTrack
+import com.rusty.spotlite.model.SimpleAlbum
+import com.rusty.spotlite.model.SimplifiedPlaylist
+import com.rusty.spotlite.model.TopTracksResponse
+import com.rusty.spotlite.model.UserProfile
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
+
+/** Thin wrapper over the Spotify Web API endpoints this app reads from. */
+interface SpotifyApi {
+
+    @GET("me")
+    suspend fun getProfile(): UserProfile
+
+    @GET("me/playlists")
+    suspend fun getPlaylists(
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Int = 0,
+    ): PagingObject<SimplifiedPlaylist>
+
+    @GET("playlists/{id}/tracks")
+    suspend fun getPlaylistTracks(
+        @Path("id") playlistId: String,
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Int = 0,
+        @Query("fields") fields: String = "items(track(id,name,uri,duration_ms,artists(id,name,uri),album(id,name,images))),next,total,limit,offset",
+    ): PagingObject<PlaylistTrackItem>
+
+    @GET("me/tracks")
+    suspend fun getSavedTracks(
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Int = 0,
+    ): PagingObject<SavedTrack>
+
+    @GET("me/following")
+    suspend fun getFollowedArtists(
+        @Query("type") type: String = "artist",
+        @Query("limit") limit: Int = 50,
+        @Query("after") after: String? = null,
+    ): FollowedArtistsResponse
+
+    @GET("artists/{id}/top-tracks")
+    suspend fun getArtistTopTracks(
+        @Path("id") artistId: String,
+        @Query("market") market: String = "from_token",
+    ): TopTracksResponse
+
+    @GET("artists/{id}/albums")
+    suspend fun getArtistAlbums(
+        @Path("id") artistId: String,
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Int = 0,
+        @Query("include_groups") includeGroups: String = "album,single",
+    ): PagingObject<SimpleAlbum>
+}
