@@ -54,7 +54,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        container.playbackController.connect()
+        lifecycleScope.launch {
+            // Only worth attempting once logged in — otherwise this always fails and
+            // would show a "couldn't connect" banner on the login screen itself.
+            if (container.authRepository.isLoggedIn()) {
+                container.playbackController.connect()
+            }
+        }
     }
 
     override fun onStop() {

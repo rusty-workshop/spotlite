@@ -29,6 +29,8 @@ class PlaybackController(private val context: Context) {
         private set
     var isConnected by mutableStateOf(false)
         private set
+    var connectionError by mutableStateOf<String?>(null)
+        private set
 
     fun connect(onResult: (Boolean) -> Unit = {}) {
         if (appRemote?.isConnected == true) {
@@ -44,15 +46,25 @@ class PlaybackController(private val context: Context) {
             override fun onConnected(remote: SpotifyAppRemote) {
                 appRemote = remote
                 isConnected = true
+                connectionError = null
                 subscribeToPlayerState(remote)
                 onResult(true)
             }
 
             override fun onFailure(throwable: Throwable) {
                 isConnected = false
+                connectionError = describe(throwable)
                 onResult(false)
             }
         })
+    }
+
+    private fun describe(throwable: Throwable): String = when (throwable.javaClass.simpleName) {
+        "CouldNotFindSpotifyApp" -> "Spotify isn't installed — install it to play tracks."
+        "NotLoggedInException" -> "Open Spotify and log in, then try again."
+        "UserNotAuthorizedException" -> "Spotify Premium is required to control playback."
+        "SpotifyDisconnectedException", "SpotifyConnectionTerminatedException" -> "Lost connection to Spotify."
+        else -> throwable.message ?: "Couldn't connect to Spotify."
     }
 
     fun disconnect() {

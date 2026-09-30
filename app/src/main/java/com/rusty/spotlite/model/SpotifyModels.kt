@@ -57,6 +57,7 @@ data class SimpleAlbum(
     val id: String,
     val name: String,
     val images: List<ImageObject> = emptyList(),
+    val uri: String = "",
 )
 
 @Serializable

@@ -1,6 +1,7 @@
 package com.rusty.spotlite.repo
 
 import com.rusty.spotlite.model.Artist
+import com.rusty.spotlite.model.SimpleAlbum
 import com.rusty.spotlite.model.SimplifiedPlaylist
 import com.rusty.spotlite.model.Track
 import com.rusty.spotlite.network.SpotifyApi
@@ -61,6 +62,12 @@ class LibraryRepository(private val api: SpotifyApi) {
 
     suspend fun loadArtistTopTracks(artistId: String): List<Track> =
         api.getArtistTopTracks(artistId).tracks
+
+    suspend fun loadArtistAlbums(artistId: String, offset: Int): Page<SimpleAlbum> {
+        val response = api.getArtistAlbums(artistId, limit = PAGE_SIZE, offset = offset)
+        val nextOffset = if (response.next != null) offset + PAGE_SIZE else null
+        return Page(response.items, nextOffset)
+    }
 
     suspend fun search(query: String): SearchResults {
         val response = api.search(query)

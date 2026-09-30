@@ -9,6 +9,7 @@ import com.rusty.spotlite.model.Track
 import com.rusty.spotlite.remote.PlaybackController
 import com.rusty.spotlite.repo.LibraryRepository
 import com.rusty.spotlite.repo.SavedTracksStore
+import com.rusty.spotlite.ui.common.offsetPager
 import kotlinx.coroutines.launch
 
 class ArtistDetailViewModel(
@@ -24,6 +25,10 @@ class ArtistDetailViewModel(
         private set
     var error by mutableStateOf<String?>(null)
         private set
+
+    val albums = offsetPager(viewModelScope) { offset ->
+        repository.loadArtistAlbums(artistId, offset).let { it.items to it.nextOffset }
+    }
 
     init {
         load()
@@ -47,7 +52,12 @@ class ArtistDetailViewModel(
 
     fun playTrack(uri: String) = playbackController.play(uri)
 
+    /** Plays an album from the top via its context URI, same rationale as playing a playlist. */
+    fun playAlbum(uri: String) = playbackController.play(uri)
+
     fun addToQueue(uri: String) = playbackController.addToQueue(uri)
+
+    fun loadAlbumsIfNeeded() = albums.loadInitial()
 
     fun toggleSaved(trackId: String) {
         viewModelScope.launch { savedTracksStore.toggle(trackId) }

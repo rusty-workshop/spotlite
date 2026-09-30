@@ -16,6 +16,7 @@ import com.rusty.spotlite.ui.PlaylistDetailViewModelFactory
 import com.rusty.spotlite.ui.SearchViewModelFactory
 import com.rusty.spotlite.ui.artist.ArtistDetailScreen
 import com.rusty.spotlite.ui.artist.ArtistDetailViewModel
+import com.rusty.spotlite.ui.common.ConnectionErrorBanner
 import com.rusty.spotlite.ui.library.LibraryScreen
 import com.rusty.spotlite.ui.library.LibraryViewModel
 import com.rusty.spotlite.ui.login.LoginScreen
@@ -36,6 +37,9 @@ fun SpotliteNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
     Column(modifier = modifier.fillMaxSize()) {
+        container.playbackController.connectionError?.let { message ->
+            ConnectionErrorBanner(message, onRetry = { container.playbackController.connect() })
+        }
         NavHost(
             navController = navController,
             startDestination = startDestination,
