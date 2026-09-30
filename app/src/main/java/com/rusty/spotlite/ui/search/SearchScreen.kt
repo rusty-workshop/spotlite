@@ -87,7 +87,13 @@ fun SearchScreen(
                 if (results.tracks.isNotEmpty()) {
                     item { SectionHeader("Songs") }
                     items(results.tracks, key = { "tr_${it.id ?: it.uri}" }) { track: Track ->
-                        TrackRow(track, onClick = { onPlayTrackUri(track.uri) })
+                        val trackId = track.id
+                        TrackRow(
+                            track = track,
+                            onClick = { onPlayTrackUri(track.uri) },
+                            isSaved = trackId?.let { viewModel.savedTracksStore.isSavedOrNull(it) },
+                            onToggleSave = trackId?.let { id -> { viewModel.toggleSaved(id) } },
+                        )
                     }
                 }
             }

@@ -46,7 +46,7 @@ fun SpotliteNavHost(
                 val viewModel: LibraryViewModel = viewModel(factory = LibraryViewModelFactory(container))
                 LibraryScreen(
                     viewModel = viewModel,
-                    onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name)) },
+                    onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name, it.uri)) },
                     onOpenArtist = { navController.navigate(Routes.artist(it.id, it.name)) },
                     onPlayTrackUri = { container.playbackController.play(it) },
                     onOpenSearch = { navController.navigate(Routes.SEARCH) },
@@ -58,7 +58,7 @@ fun SpotliteNavHost(
                 SearchScreen(
                     viewModel = viewModel,
                     onBack = { navController.popBackStack() },
-                    onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name)) },
+                    onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name, it.uri)) },
                     onOpenArtist = { navController.navigate(Routes.artist(it.id, it.name)) },
                     onPlayTrackUri = { container.playbackController.play(it) },
                 )
@@ -67,8 +67,9 @@ fun SpotliteNavHost(
             composable(Routes.PLAYLIST_PATTERN) { backStackEntry ->
                 val playlistId = backStackEntry.arguments?.getString("playlistId").orEmpty()
                 val playlistName = backStackEntry.arguments?.getString("playlistName").orEmpty()
+                val playlistUri = backStackEntry.arguments?.getString("playlistUri").orEmpty()
                 val viewModel: PlaylistDetailViewModel = viewModel(
-                    factory = PlaylistDetailViewModelFactory(container, playlistId),
+                    factory = PlaylistDetailViewModelFactory(container, playlistId, playlistUri),
                 )
                 PlaylistDetailScreen(
                     playlistName = playlistName,

@@ -11,16 +11,23 @@ import com.rusty.spotlite.ui.search.SearchViewModel
 class LibraryViewModelFactory(private val container: AppContainer) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        LibraryViewModel(container.libraryRepository) as T
+        LibraryViewModel(container.libraryRepository, container.savedTracksStore) as T
 }
 
 class PlaylistDetailViewModelFactory(
     private val container: AppContainer,
     private val playlistId: String,
+    private val playlistUri: String,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        PlaylistDetailViewModel(container.libraryRepository, container.playbackController, playlistId) as T
+        PlaylistDetailViewModel(
+            container.libraryRepository,
+            container.playbackController,
+            container.savedTracksStore,
+            playlistId,
+            playlistUri,
+        ) as T
 }
 
 class ArtistDetailViewModelFactory(
@@ -29,11 +36,16 @@ class ArtistDetailViewModelFactory(
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        ArtistDetailViewModel(container.libraryRepository, container.playbackController, artistId) as T
+        ArtistDetailViewModel(
+            container.libraryRepository,
+            container.playbackController,
+            container.savedTracksStore,
+            artistId,
+        ) as T
 }
 
 class SearchViewModelFactory(private val container: AppContainer) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        SearchViewModel(container.libraryRepository) as T
+        SearchViewModel(container.libraryRepository, container.savedTracksStore) as T
 }

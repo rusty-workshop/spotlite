@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rusty.spotlite.repo.LibraryRepository
+import com.rusty.spotlite.repo.SavedTracksStore
 import com.rusty.spotlite.repo.SearchResults
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -13,7 +14,10 @@ import kotlinx.coroutines.launch
 
 private const val DEBOUNCE_MILLIS = 300L
 
-class SearchViewModel(private val repository: LibraryRepository) : ViewModel() {
+class SearchViewModel(
+    private val repository: LibraryRepository,
+    val savedTracksStore: SavedTracksStore,
+) : ViewModel() {
 
     var query by mutableStateOf("")
         private set
@@ -44,11 +48,18 @@ class SearchViewModel(private val repository: LibraryRepository) : ViewModel() {
             isLoading = true
             error = null
             runCatching { repository.search(newQuery) }
-                .onSuccess { results = it }
+                .onSuccess { found ->
+                    results = found
+                    launch { savedTracksStore.ensureLoaded(found.tracks.mapNotNull { it.id }) }
+                }
                 .onFailure { error = it.message ?: "Search failed" }
             isLoading = false
         }
     }
 
     fun retry() = onQueryChange(query)
+
+    fun toggleSaved(trackId: String) {
+        viewModelScope.launch { savedTracksStore.toggle(trackId) }
+    }
 }

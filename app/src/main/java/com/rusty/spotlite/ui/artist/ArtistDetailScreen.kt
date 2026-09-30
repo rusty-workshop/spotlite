@@ -52,7 +52,13 @@ fun ArtistDetailScreen(
 
             else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(viewModel.topTracks, key = { it.id ?: it.uri }) { track ->
-                    TrackRow(track, onClick = { viewModel.playTrack(track.uri) })
+                    val trackId = track.id
+                    TrackRow(
+                        track = track,
+                        onClick = { viewModel.playTrack(track.uri) },
+                        isSaved = trackId?.let { viewModel.savedTracksStore.isSavedOrNull(it) },
+                        onToggleSave = trackId?.let { id -> { viewModel.toggleSaved(id) } },
+                    )
                 }
             }
         }

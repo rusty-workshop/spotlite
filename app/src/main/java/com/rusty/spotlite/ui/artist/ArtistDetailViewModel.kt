@@ -8,11 +8,13 @@ import androidx.lifecycle.viewModelScope
 import com.rusty.spotlite.model.Track
 import com.rusty.spotlite.remote.PlaybackController
 import com.rusty.spotlite.repo.LibraryRepository
+import com.rusty.spotlite.repo.SavedTracksStore
 import kotlinx.coroutines.launch
 
 class ArtistDetailViewModel(
     private val repository: LibraryRepository,
     private val playbackController: PlaybackController,
+    val savedTracksStore: SavedTracksStore,
     private val artistId: String,
 ) : ViewModel() {
 
@@ -34,11 +36,18 @@ class ArtistDetailViewModel(
             isLoading = true
             error = null
             runCatching { repository.loadArtistTopTracks(artistId) }
-                .onSuccess { topTracks = it }
+                .onSuccess { tracks ->
+                    topTracks = tracks
+                    launch { savedTracksStore.ensureLoaded(tracks.mapNotNull { it.id }) }
+                }
                 .onFailure { error = it.message ?: "Couldn't load this artist" }
             isLoading = false
         }
     }
 
     fun playTrack(uri: String) = playbackController.play(uri)
+
+    fun toggleSaved(trackId: String) {
+        viewModelScope.launch { savedTracksStore.toggle(trackId) }
+    }
 }

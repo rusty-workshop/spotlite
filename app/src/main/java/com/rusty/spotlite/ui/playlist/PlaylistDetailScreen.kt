@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +36,14 @@ fun PlaylistDetailScreen(
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
+            actions = {
+                // Starts from the top of the playlist and queues normally — App Remote has
+                // no reliable way to start mid-playlist at an arbitrary track, so tapping a
+                // row below still only plays that one track on its own.
+                IconButton(onClick = viewModel::playPlaylist) {
+                    Icon(Icons.Filled.PlayArrow, contentDescription = "Play playlist")
+                }
+            },
         )
 
         val pager = viewModel.tracks
@@ -43,7 +52,13 @@ fun PlaylistDetailScreen(
 
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
             items(pager.items, key = { it.id ?: it.uri }) { track ->
-                TrackRow(track, onClick = { viewModel.playTrack(track.uri) })
+                val trackId = track.id
+                TrackRow(
+                    track = track,
+                    onClick = { viewModel.playTrack(track.uri) },
+                    isSaved = trackId?.let { viewModel.savedTracksStore.isSavedOrNull(it) },
+                    onToggleSave = trackId?.let { id -> { viewModel.toggleSaved(id) } },
+                )
             }
             if (pager.isLoading) item { LoadingRow() }
             pager.error?.let { message -> item { ErrorRow(message, onRetry = pager::loadMore) } }

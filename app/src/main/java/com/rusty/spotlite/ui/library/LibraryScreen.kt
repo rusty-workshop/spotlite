@@ -83,7 +83,13 @@ fun LibraryScreen(
                 InfiniteScrollHandler(listState, pager.items.size, pager::loadMore)
                 LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                     items(pager.items, key = { it.id ?: it.uri }) { track ->
-                        TrackRow(track, onClick = { onPlayTrackUri(track.uri) })
+                        val trackId = track.id
+                        TrackRow(
+                            track = track,
+                            onClick = { onPlayTrackUri(track.uri) },
+                            isSaved = trackId?.let { viewModel.savedTracksStore.isSavedOrNull(it) },
+                            onToggleSave = trackId?.let { id -> { viewModel.toggleSaved(id) } },
+                        )
                     }
                     if (pager.isLoading) item { LoadingRow() }
                     pager.error?.let { message -> item { ErrorRow(message, onRetry = pager::loadMore) } }
