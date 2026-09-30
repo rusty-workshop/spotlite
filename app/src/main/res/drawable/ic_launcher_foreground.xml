@@ -4,9 +4,16 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- One bold rounded play-triangle — legible at launcher size, unlike the old thin
-         multi-stroke sound-wave mark, and kept within the adaptive icon's safe zone. -->
+    <!-- A literal spotlight, playing on the app's name: a translucent beam cone
+         falling onto a lit circle, with the play mark sitting in the light. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.32"
+        android:pathData="M54,17 L33,60 L75,60 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,64 A20,20 0 1,0 74,64 A20,20 0 1,0 34,64 Z" />
     <path
         android:fillColor="#121212"
-        android:pathData="M30,33 L30,75 Q30,82 36.17,78.68 L75.83,57.32 Q82,54 75.83,50.68 L36.17,29.32 Q30,26 30,33 Z" />
+        android:pathData="M47,56 L47,72 Q47,76 50.51,74.08 L65.49,65.92 Q69,64 65.49,62.08 L50.51,53.92 Q47,52 47,56 Z" />
 </vector>

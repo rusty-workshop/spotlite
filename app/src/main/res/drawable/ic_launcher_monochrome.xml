@@ -4,9 +4,17 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Same play-triangle mark as ic_launcher_foreground; the fill color here is
-         ignored by Android 13+ themed icons, which tint this to a single system color. -->
+    <!-- Same spotlight mark as ic_launcher_foreground, flattened to one silhouette for
+         Android 13+ themed icons. Fill color is ignored — the system tints this to a
+         single theme color. Beam and circle are separate paths (they overlap, so combining
+         them with the triangle under one evenOdd fill would wrongly cancel that overlap
+         out); only the circle gets the play triangle cut out of it. -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M30,33 L30,75 Q30,82 36.17,78.68 L75.83,57.32 Q82,54 75.83,50.68 L36.17,29.32 Q30,26 30,33 Z" />
+        android:pathData="M54,17 L33,60 L75,60 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M34,64 A20,20 0 1,0 74,64 A20,20 0 1,0 34,64 Z
+                           M47,56 L47,72 Q47,76 50.51,74.08 L65.49,65.92 Q69,64 65.49,62.08 L50.51,53.92 Q47,52 47,56 Z" />
 </vector>
