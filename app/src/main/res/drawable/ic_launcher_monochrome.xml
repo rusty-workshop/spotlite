@@ -4,9 +4,9 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- One bold rounded play-triangle — legible at launcher size, unlike the old thin
-         multi-stroke sound-wave mark, and kept within the adaptive icon's safe zone. -->
+    <!-- Same play-triangle mark as ic_launcher_foreground; the fill color here is
+         ignored by Android 13+ themed icons, which tint this to a single system color. -->
     <path
-        android:fillColor="#121212"
+        android:fillColor="#FFFFFF"
         android:pathData="M30,33 L30,75 Q30,82 36.17,78.68 L75.83,57.32 Q82,54 75.83,50.68 L36.17,29.32 Q30,26 30,33 Z" />
 </vector>
