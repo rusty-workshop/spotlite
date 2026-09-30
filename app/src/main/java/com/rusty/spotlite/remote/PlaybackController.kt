@@ -66,6 +66,11 @@ class PlaybackController(private val context: Context) {
         appRemote?.playerApi?.play(uri)
     }
 
+    /** Appends a track to the Spotify app's own play queue without interrupting what's playing. */
+    fun addToQueue(uri: String) {
+        appRemote?.playerApi?.queue(uri)
+    }
+
     fun togglePlayPause() {
         val playing = nowPlaying ?: return
         if (playing.isPaused) appRemote?.playerApi?.resume() else appRemote?.playerApi?.pause()

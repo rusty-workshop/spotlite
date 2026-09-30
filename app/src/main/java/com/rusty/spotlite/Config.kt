@@ -11,6 +11,8 @@ object Config {
     val SCOPES = listOf(
         "user-read-private",
         "user-library-read",
+        "user-library-modify", // save/unsave tracks (the heart toggle)
+        "user-read-playback-state", // GET /me/player/queue
         "playlist-read-private",
         "playlist-read-collaborative",
         "user-follow-read",

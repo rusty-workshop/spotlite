@@ -3,6 +3,7 @@ package com.rusty.spotlite.network
 import com.rusty.spotlite.model.FollowedArtistsResponse
 import com.rusty.spotlite.model.PagingObject
 import com.rusty.spotlite.model.PlaylistTrackItem
+import com.rusty.spotlite.model.QueueResponse
 import com.rusty.spotlite.model.SavedTrack
 import com.rusty.spotlite.model.SearchResponse
 import com.rusty.spotlite.model.SimpleAlbum
@@ -79,4 +80,7 @@ interface SpotifyApi {
 
     @DELETE("me/tracks")
     suspend fun removeTracks(@Query("ids") commaSeparatedIds: String)
+
+    @GET("me/player/queue")
+    suspend fun getQueue(): QueueResponse
 }

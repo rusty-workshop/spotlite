@@ -33,6 +33,8 @@ class PlaylistDetailViewModel(
     /** Plays the whole playlist from the top via its context URI, queueing normally. */
     fun playPlaylist() = playbackController.play(playlistUri)
 
+    fun addToQueue(uri: String) = playbackController.addToQueue(uri)
+
     fun toggleSaved(trackId: String) {
         viewModelScope.launch { savedTracksStore.toggle(trackId) }
     }

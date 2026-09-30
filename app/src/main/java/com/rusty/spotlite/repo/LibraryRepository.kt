@@ -16,6 +16,11 @@ data class SearchResults(
     val tracks: List<Track>,
 )
 
+data class QueueState(
+    val current: Track?,
+    val upcoming: List<Track>,
+)
+
 private const val PAGE_SIZE = 50
 
 /**
@@ -64,5 +69,10 @@ class LibraryRepository(private val api: SpotifyApi) {
             artists = response.artists?.items.orEmpty(),
             tracks = response.tracks?.items.orEmpty(),
         )
+    }
+
+    suspend fun loadQueue(): QueueState {
+        val response = api.getQueue()
+        return QueueState(response.currently_playing, response.queue)
     }
 }

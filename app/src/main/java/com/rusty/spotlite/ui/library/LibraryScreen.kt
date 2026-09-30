@@ -37,6 +37,7 @@ fun LibraryScreen(
     onOpenPlaylist: (SimplifiedPlaylist) -> Unit,
     onOpenArtist: (Artist) -> Unit,
     onPlayTrackUri: (String) -> Unit,
+    onAddToQueueUri: (String) -> Unit,
     onOpenSearch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -89,6 +90,7 @@ fun LibraryScreen(
                             onClick = { onPlayTrackUri(track.uri) },
                             isSaved = trackId?.let { viewModel.savedTracksStore.isSavedOrNull(it) },
                             onToggleSave = trackId?.let { id -> { viewModel.toggleSaved(id) } },
+                            onAddToQueue = { onAddToQueueUri(track.uri) },
                         )
                     }
                     if (pager.isLoading) item { LoadingRow() }

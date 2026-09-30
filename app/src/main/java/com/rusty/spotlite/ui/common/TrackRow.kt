@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
@@ -22,7 +23,8 @@ import com.rusty.spotlite.model.Track
  * [isSaved] is null until the heart's saved-status has actually been fetched (see
  * SavedTracksStore) — the heart only renders once we know which icon to show, rather
  * than flashing a wrong state. [onToggleSave] is null wherever a track has no id to
- * save against (Spotify sometimes omits it on local/unavailable tracks).
+ * save against (Spotify sometimes omits it on local/unavailable tracks). [onAddToQueue]
+ * is null wherever queueing doesn't make sense (e.g. inside the queue screen itself).
  */
 @Composable
 fun TrackRow(
@@ -31,6 +33,7 @@ fun TrackRow(
     modifier: Modifier = Modifier,
     isSaved: Boolean? = null,
     onToggleSave: (() -> Unit)? = null,
+    onAddToQueue: (() -> Unit)? = null,
 ) {
     Row(
         modifier = modifier
@@ -53,6 +56,11 @@ fun TrackRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+        }
+        if (onAddToQueue != null) {
+            IconButton(onClick = onAddToQueue) {
+                Icon(Icons.AutoMirrored.Filled.PlaylistAdd, contentDescription = "Add to queue")
+            }
         }
         if (onToggleSave != null && isSaved != null) {
             IconButton(onClick = onToggleSave) {

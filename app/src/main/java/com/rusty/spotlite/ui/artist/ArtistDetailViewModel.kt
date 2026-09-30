@@ -47,6 +47,8 @@ class ArtistDetailViewModel(
 
     fun playTrack(uri: String) = playbackController.play(uri)
 
+    fun addToQueue(uri: String) = playbackController.addToQueue(uri)
+
     fun toggleSaved(trackId: String) {
         viewModelScope.launch { savedTracksStore.toggle(trackId) }
     }

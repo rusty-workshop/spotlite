@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
@@ -30,6 +31,7 @@ fun NowPlayingBar(
     nowPlaying: NowPlaying,
     onTogglePlayPause: () -> Unit,
     onSkipNext: () -> Unit,
+    onOpenQueue: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -66,6 +68,9 @@ fun NowPlayingBar(
             }
             IconButton(onClick = onSkipNext) {
                 Icon(Icons.Filled.SkipNext, contentDescription = "Skip")
+            }
+            IconButton(onClick = onOpenQueue) {
+                Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = "Queue")
             }
         }
     }

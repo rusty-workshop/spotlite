@@ -58,6 +58,7 @@ fun PlaylistDetailScreen(
                     onClick = { viewModel.playTrack(track.uri) },
                     isSaved = trackId?.let { viewModel.savedTracksStore.isSavedOrNull(it) },
                     onToggleSave = trackId?.let { id -> { viewModel.toggleSaved(id) } },
+                    onAddToQueue = { viewModel.addToQueue(track.uri) },
                 )
             }
             if (pager.isLoading) item { LoadingRow() }

@@ -6,6 +6,7 @@ object Routes {
     const val LOGIN = "login"
     const val LIBRARY = "library"
     const val SEARCH = "search"
+    const val QUEUE = "queue"
     const val PLAYLIST_PATTERN = "playlist/{playlistId}/{playlistName}/{playlistUri}"
     const val ARTIST_PATTERN = "artist/{artistId}/{artistName}"
 

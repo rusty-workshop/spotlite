@@ -39,6 +39,7 @@ fun SearchScreen(
     onOpenPlaylist: (SimplifiedPlaylist) -> Unit,
     onOpenArtist: (Artist) -> Unit,
     onPlayTrackUri: (String) -> Unit,
+    onAddToQueueUri: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -93,6 +94,7 @@ fun SearchScreen(
                             onClick = { onPlayTrackUri(track.uri) },
                             isSaved = trackId?.let { viewModel.savedTracksStore.isSavedOrNull(it) },
                             onToggleSave = trackId?.let { id -> { viewModel.toggleSaved(id) } },
+                            onAddToQueue = { onAddToQueueUri(track.uri) },
                         )
                     }
                 }

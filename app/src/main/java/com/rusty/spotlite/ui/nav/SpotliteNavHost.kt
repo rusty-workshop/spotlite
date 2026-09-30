@@ -20,8 +20,11 @@ import com.rusty.spotlite.ui.library.LibraryScreen
 import com.rusty.spotlite.ui.library.LibraryViewModel
 import com.rusty.spotlite.ui.login.LoginScreen
 import com.rusty.spotlite.ui.nowplaying.NowPlayingBar
+import com.rusty.spotlite.ui.QueueViewModelFactory
 import com.rusty.spotlite.ui.playlist.PlaylistDetailScreen
 import com.rusty.spotlite.ui.playlist.PlaylistDetailViewModel
+import com.rusty.spotlite.ui.queue.QueueScreen
+import com.rusty.spotlite.ui.queue.QueueViewModel
 import com.rusty.spotlite.ui.search.SearchScreen
 import com.rusty.spotlite.ui.search.SearchViewModel
 
@@ -49,6 +52,7 @@ fun SpotliteNavHost(
                     onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name, it.uri)) },
                     onOpenArtist = { navController.navigate(Routes.artist(it.id, it.name)) },
                     onPlayTrackUri = { container.playbackController.play(it) },
+                    onAddToQueueUri = { container.playbackController.addToQueue(it) },
                     onOpenSearch = { navController.navigate(Routes.SEARCH) },
                 )
             }
@@ -61,6 +65,15 @@ fun SpotliteNavHost(
                     onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name, it.uri)) },
                     onOpenArtist = { navController.navigate(Routes.artist(it.id, it.name)) },
                     onPlayTrackUri = { container.playbackController.play(it) },
+                    onAddToQueueUri = { container.playbackController.addToQueue(it) },
+                )
+            }
+
+            composable(Routes.QUEUE) {
+                val viewModel: QueueViewModel = viewModel(factory = QueueViewModelFactory(container))
+                QueueScreen(
+                    viewModel = viewModel,
+                    onBack = { navController.popBackStack() },
                 )
             }
 
@@ -97,6 +110,7 @@ fun SpotliteNavHost(
                 nowPlaying = nowPlaying,
                 onTogglePlayPause = { container.playbackController.togglePlayPause() },
                 onSkipNext = { container.playbackController.skipNext() },
+                onOpenQueue = { navController.navigate(Routes.QUEUE) },
             )
         }
     }

@@ -121,3 +121,9 @@ data class SearchResponse(
     val artists: PagingObject<Artist>? = null,
     val tracks: PagingObject<Track>? = null,
 )
+
+@Serializable
+data class QueueResponse(
+    val currently_playing: Track? = null,
+    val queue: List<Track> = emptyList(),
+)
