@@ -8,6 +8,7 @@ import com.rusty.spotlite.network.NetworkModule
 import com.rusty.spotlite.remote.PlaybackController
 import com.rusty.spotlite.repo.LibraryRepository
 import com.rusty.spotlite.repo.SavedTracksStore
+import com.rusty.spotlite.update.UpdateManager
 
 /** Hand-rolled composition root; the object graph here is small enough that a DI framework isn't worth the APK weight. */
 class AppContainer(context: Context) {
@@ -18,4 +19,5 @@ class AppContainer(context: Context) {
     val savedTracksStore = SavedTracksStore(api)
     val playbackController = PlaybackController(context.applicationContext)
     val appIconManager = AppIconManager(context.applicationContext)
+    val updateManager = UpdateManager(context.applicationContext, NetworkModule.buildGitHubApi(), NetworkModule.bareHttpClient)
 }

@@ -15,3 +15,7 @@ local.properties
 # Spotify's App Remote AAR is fetched by hand (see app/libs/README.md) and its
 # distribution terms are Spotify's, not ours — keep it out of the repo.
 /app/libs/*.aar
+
+# Release signing keystore — CI pulls the same one from GitHub Actions secrets
+# (see .github/workflows/release.yml) so local and CI builds stay update-compatible.
+/keystore/

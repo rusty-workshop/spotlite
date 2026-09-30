@@ -8,9 +8,11 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.rusty.spotlite.update.GitHubApi
 import retrofit2.Retrofit
 
 private const val WEB_API_BASE_URL = "https://api.spotify.com/v1/"
+private const val GITHUB_API_BASE_URL = "https://api.github.com/"
 
 /** Attaches a fresh bearer token to every request, refreshing it first if needed. */
 private class AuthInterceptor(private val authRepository: AuthRepository) : Interceptor {
@@ -42,5 +44,16 @@ object NetworkModule {
             .build()
 
         return retrofit.create(SpotifyApi::class.java)
+    }
+
+    fun buildGitHubApi(): GitHubApi {
+        val contentType = "application/json".toMediaType()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(GITHUB_API_BASE_URL)
+            .client(bareHttpClient)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+
+        return retrofit.create(GitHubApi::class.java)
     }
 }

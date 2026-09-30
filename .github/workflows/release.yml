@@ -1,0 +1,72 @@
+name: Release
+
+# Builds a signed release APK and publishes it as a GitHub Release on every push to
+# main, so the in-app updater (update/UpdateManager.kt) always has something newer to
+# find. versionCode is the commit count (see app/build.gradle.kts), so it's always
+# strictly increasing with zero manual bumping.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history — versionCode is `git rev-list --count HEAD`, which needs it.
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Download Spotify App Remote AAR
+        run: |
+          mkdir -p app/libs
+          curl -sL --fail -o app/libs/spotify-app-remote-release.aar \
+            "https://github.com/spotify/android-sdk/releases/download/v0.8.0-appremote_v2.1.0-auth/spotify-app-remote-release-0.8.0.aar"
+
+      - name: Decode release keystore
+        run: |
+          mkdir -p keystore
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore/spotlite-release.jks
+
+      - name: Write local.properties
+        run: |
+          cat > local.properties <<EOF
+          sdk.dir=${ANDROID_HOME}
+          spotify.clientId=${{ secrets.SPOTIFY_CLIENT_ID }}
+          release.storeFile=keystore/spotlite-release.jks
+          release.storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          release.keyAlias=${{ secrets.KEY_ALIAS }}
+          release.keyPassword=${{ secrets.KEY_PASSWORD }}
+          EOF
+
+      - name: Build signed release APK
+        run: ./gradlew :app:assembleRelease --no-daemon
+
+      - name: Determine version
+        id: version
+        run: echo "code=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ steps.version.outputs.code }}"
+          cp app/build/outputs/apk/release/app-release.apk spotlite.apk
+          gh release delete "$TAG" --yes || true
+          gh release create "$TAG" spotlite.apk \
+            --title "Spotlite $TAG" \
+            --notes "Automated build from commit ${{ github.sha }}."

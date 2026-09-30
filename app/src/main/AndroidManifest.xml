@@ -3,6 +3,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Lets the in-app updater launch the system install prompt for a downloaded APK. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <queries>
         <!-- Required on Android 11+ so the app can detect whether the real
@@ -35,6 +37,19 @@
                 <data android:scheme="spotlite" android:host="callback" />
             </intent-filter>
         </activity>
+
+        <!-- Serves the downloaded update APK from cache as a content:// URI the system
+             installer is allowed to read — required since Android 7 for any APK not
+             addressed by a plain file:// path. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity-alias
             android:name="com.rusty.spotlite.icon.IconClassic"

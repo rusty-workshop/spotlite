@@ -67,7 +67,7 @@ fun LibraryScreen(
                     Icon(Icons.Filled.Search, contentDescription = "Search")
                 }
                 IconButton(onClick = onOpenSettings) {
-                    Icon(Icons.Filled.Settings, contentDescription = "App icon settings")
+                    Icon(Icons.Filled.Settings, contentDescription = "Settings")
                 }
                 IconButton(onClick = onLogout) {
                     Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Log out")

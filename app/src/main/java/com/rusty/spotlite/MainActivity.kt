@@ -3,6 +3,7 @@ package com.rusty.spotlite
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
 import com.rusty.spotlite.ui.nav.Routes
 import com.rusty.spotlite.ui.nav.SpotliteNavHost
@@ -35,6 +37,13 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(Unit) {
                 startDestination = if (container.authRepository.isLoggedIn()) Routes.LIBRARY else Routes.LOGIN
+            }
+
+            val context = LocalContext.current
+            LaunchedEffect(Unit) {
+                container.updateManager.toastMessages.collect { message ->
+                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                }
             }
 
             SpotliteTheme {
@@ -61,6 +70,7 @@ class MainActivity : ComponentActivity() {
                 container.playbackController.connect()
             }
         }
+        lifecycleScope.launch { container.updateManager.checkForUpdate() }
     }
 
     override fun onStop() {

@@ -16,6 +16,25 @@ val localProperties = Properties().apply {
 }
 val spotifyClientId: String = localProperties.getProperty("spotify.clientId", "")
 
+// versionCode tracks git history directly — every commit on main gets its own strictly
+// increasing code for free, so the in-app updater always knows a CI-built release is
+// newer than whatever's installed without anyone hand-bumping a number.
+val gitCommitCount: Int = try {
+    val process = ProcessBuilder("git", "rev-list", "--count", "HEAD")
+        .directory(rootDir)
+        .redirectErrorStream(true)
+        .start()
+    process.inputStream.bufferedReader().readText().trim().toInt().also { process.waitFor() }
+} catch (e: Exception) {
+    1
+}
+
+val releaseStoreFile = localProperties.getProperty("release.storeFile", "")
+val releaseStorePassword = localProperties.getProperty("release.storePassword", "")
+val releaseKeyAlias = localProperties.getProperty("release.keyAlias", "")
+val releaseKeyPassword = localProperties.getProperty("release.keyPassword", "")
+val hasReleaseSigningConfig = releaseStoreFile.isNotBlank() && releaseStorePassword.isNotBlank()
+
 android {
     namespace = "com.rusty.spotlite"
 
@@ -29,10 +48,24 @@ android {
         applicationId = "com.rusty.spotlite"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = gitCommitCount
+        versionName = "1.$gitCommitCount"
 
         buildConfigField("String", "SPOTIFY_CLIENT_ID", "\"$spotifyClientId\"")
+    }
+
+    // Only defined when local.properties (or CI) actually supplies keystore credentials,
+    // so a fresh clone without them still builds an (unsigned) release APK — same
+    // fallback pattern as the Spotify Client ID and the App Remote AAR.
+    if (hasReleaseSigningConfig) {
+        signingConfigs {
+            create("release") {
+                storeFile = rootProject.file(releaseStoreFile)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
     }
 
     buildTypes {
@@ -44,6 +77,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (hasReleaseSigningConfig) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

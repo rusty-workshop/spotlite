@@ -61,5 +61,5 @@ class QueueViewModelFactory(private val container: AppContainer) : ViewModelProv
 class IconSettingsViewModelFactory(private val container: AppContainer) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        IconSettingsViewModel(container.appIconManager) as T
+        IconSettingsViewModel(container.appIconManager, container.updateManager) as T
 }
