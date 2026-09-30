@@ -1,8 +1,20 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
+
+// Read from local.properties (gitignored) rather than hardcoding a personal Spotify app's
+// Client ID in a tracked source file — it's not secret (PKCE needs no client secret), but
+// it's still tied to one person's developer dashboard and shouldn't end up in the repo.
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) load(FileInputStream(file))
+}
+val spotifyClientId: String = localProperties.getProperty("spotify.clientId", "")
 
 android {
     namespace = "com.rusty.spotlite"
@@ -19,6 +31,8 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "SPOTIFY_CLIENT_ID", "\"$spotifyClientId\"")
     }
 
     buildTypes {
@@ -40,6 +54,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

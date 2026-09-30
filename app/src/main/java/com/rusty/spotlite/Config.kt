@@ -1,11 +1,12 @@
 package com.rusty.spotlite
 
 /**
- * Fill these in from your app at https://developer.spotify.com/dashboard.
- * Redirect URI must be added there exactly as below (Settings -> Redirect URIs).
+ * Create an app at https://developer.spotify.com/dashboard, add Redirect URI
+ * `spotlite://callback`, then set `spotify.clientId=...` in local.properties (gitignored —
+ * see app/build.gradle.kts, which reads it into BuildConfig.SPOTIFY_CLIENT_ID).
  */
 object Config {
-    const val CLIENT_ID = "YOUR_SPOTIFY_CLIENT_ID"
+    val CLIENT_ID: String = BuildConfig.SPOTIFY_CLIENT_ID.ifBlank { "YOUR_SPOTIFY_CLIENT_ID" }
     const val REDIRECT_URI = "spotlite://callback"
 
     val SCOPES = listOf(

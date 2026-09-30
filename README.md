@@ -80,8 +80,14 @@ rather than playing audio in-process.
      give it your device's SHA-1 debug signing fingerprint (get it with
      `./gradlew signingReport`).
    - Copy the **Client ID**.
-2. Paste that Client ID into
-   [`Config.kt`](app/src/main/java/com/rusty/spotlite/Config.kt).
+2. Add it to `local.properties` (already gitignored, so it never ends up
+   in the repo — it's not secret, but it's tied to your own developer
+   dashboard):
+   ```properties
+   spotify.clientId=your-client-id-here
+   ```
+   `app/build.gradle.kts` reads this into `BuildConfig.SPOTIFY_CLIENT_ID`,
+   which [`Config.kt`](app/src/main/java/com/rusty/spotlite/Config.kt) uses.
 3. **Download the App Remote SDK AAR** — see
    [`app/libs/README.md`](app/libs/README.md) for the one-time download step
    (it's not on Maven Central, so Gradle can't fetch it for you).
