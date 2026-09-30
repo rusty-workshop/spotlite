@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,6 +40,7 @@ fun LibraryScreen(
     onPlayTrackUri: (String) -> Unit,
     onAddToQueueUri: (String) -> Unit,
     onOpenSearch: () -> Unit,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by remember { mutableStateOf(LibraryTab.PLAYLISTS) }
@@ -49,6 +51,9 @@ fun LibraryScreen(
             actions = {
                 IconButton(onClick = onOpenSearch) {
                     Icon(Icons.Filled.Search, contentDescription = "Search")
+                }
+                IconButton(onClick = onLogout) {
+                    Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Log out")
                 }
             },
         )

@@ -19,6 +19,12 @@ data class NowPlaying(
     val artistName: String,
     val isPaused: Boolean,
     val albumArt: Bitmap? = null,
+    /** Position as of [positionUpdatedAtMs] — App Remote only pushes updates on real
+     *  events (play/pause/seek/track change), not continuously, so the UI interpolates
+     *  from this anchor rather than expecting a tick every second from here. */
+    val positionMs: Long = 0,
+    val durationMs: Long = 0,
+    val positionUpdatedAtMs: Long = System.currentTimeMillis(),
 )
 
 /**
@@ -102,6 +108,16 @@ class PlaybackController(private val context: Context) {
         appRemote?.playerApi?.skipPrevious()
     }
 
+    fun seekTo(positionMs: Long) {
+        appRemote?.playerApi?.seekTo(positionMs)
+        // Update optimistically — the SDK's own confirming event can lag visibly
+        // behind a user's drag release otherwise.
+        nowPlaying = nowPlaying?.copy(
+            positionMs = positionMs,
+            positionUpdatedAtMs = System.currentTimeMillis(),
+        )
+    }
+
     // Tracks which track's art is already loaded/loading so a slow fetch for a track the
     // user has since skipped past can't land late and overwrite the current one's art.
     private var artLoadedForTrackUri: String? = null
@@ -118,6 +134,9 @@ class PlaybackController(private val context: Context) {
                 // Keep the art we already have across pause/resume/seek events for the
                 // same track — only a genuine track change should trigger a refetch.
                 albumArt = previous?.takeIf { it.trackUri == track.uri }?.albumArt,
+                positionMs = state.playbackPosition,
+                durationMs = track.duration,
+                positionUpdatedAtMs = System.currentTimeMillis(),
             )
             if (track != null && track.imageUri != null && artLoadedForTrackUri != track.uri) {
                 loadAlbumArt(remote, track.uri, track.imageUri)

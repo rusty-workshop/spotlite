@@ -3,6 +3,7 @@ package com.rusty.spotlite.ui.nav
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -29,6 +30,7 @@ import com.rusty.spotlite.ui.queue.QueueScreen
 import com.rusty.spotlite.ui.queue.QueueViewModel
 import com.rusty.spotlite.ui.search.SearchScreen
 import com.rusty.spotlite.ui.search.SearchViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SpotliteNavHost(
@@ -37,6 +39,8 @@ fun SpotliteNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
+    val scope = rememberCoroutineScope()
+
     Column(modifier = modifier.fillMaxSize()) {
         container.playbackController.connectionError?.let { message ->
             ConnectionErrorBanner(message, onRetry = { container.playbackController.connect() })
@@ -63,6 +67,15 @@ fun SpotliteNavHost(
                     onPlayTrackUri = { container.playbackController.play(it) },
                     onAddToQueueUri = { container.playbackController.addToQueue(it) },
                     onOpenSearch = { navController.navigate(Routes.SEARCH) },
+                    onLogout = {
+                        scope.launch {
+                            container.playbackController.disconnect()
+                            container.authRepository.logout()
+                            navController.navigate(Routes.LOGIN) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    },
                 )
             }
 
@@ -128,6 +141,7 @@ fun SpotliteNavHost(
                 onTogglePlayPause = { container.playbackController.togglePlayPause() },
                 onSkipNext = { container.playbackController.skipNext() },
                 onOpenQueue = { navController.navigate(Routes.QUEUE) },
+                onSeek = { container.playbackController.seekTo(it) },
             )
         }
     }
