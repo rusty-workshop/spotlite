@@ -14,6 +14,7 @@ retrofit = "2.11.0"
 retrofitKotlinxSerialization = "1.0.0"
 coilCompose = "2.7.0"
 browser = "1.8.0"
+gson = "2.11.0"
 junit = "4.13.2"
 coroutinesTest = "1.9.0"
 
@@ -39,6 +40,7 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhtt
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-kotlinx-serialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinxSerialization" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]

@@ -99,6 +99,13 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
+    // The App Remote SDK's ConnectionParams constructor builds a GsonMapper internally —
+    // not optional/dead code, it's called on every connection attempt. Because the AAR is
+    // added via fileTree above (no POM processed), its own transitive Gson dependency never
+    // gets pulled in automatically, so this has to be declared explicitly or every call to
+    // PlaybackController.connect() crashes with NoClassDefFoundError.
+    implementation(libs.gson)
+
     implementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.androidx.core.ktx)
