@@ -1,6 +1,7 @@
 package com.rusty.spotlite.auth
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import com.rusty.spotlite.Config
@@ -46,7 +47,13 @@ class AuthRepository(
             .appendQueryParameter("scope", Config.SCOPES)
             .build()
 
-        CustomTabsIntent.Builder().build().launchUrl(context, uri)
+        // AuthRepository is constructed with an application context, not an Activity —
+        // any Activity-launching intent fired from that requires FLAG_ACTIVITY_NEW_TASK,
+        // or startActivity() throws immediately. CustomTabsIntent.launchUrl() doesn't add
+        // this itself, so it has to be set on the underlying intent here.
+        val customTabsIntent = CustomTabsIntent.Builder().build()
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        customTabsIntent.launchUrl(context, uri)
     }
 
     /** Call from the activity that receives the `spotlite://callback` redirect. */
