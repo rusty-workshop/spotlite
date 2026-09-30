@@ -28,8 +28,16 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      # Not using android-actions/setup-android here — it unconditionally tries to
+      # install the long-removed legacy "tools" package and fails outright on current
+      # SDK repositories. GitHub's runner image already has cmdline-tools and ANDROID_HOME
+      # set up; this just grabs the specific platform/build-tools this project compiles
+      # against (matching what's installed locally: android-36.1 / build-tools 36.0.0).
+      - name: Install required Android SDK packages
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | sort -V | tail -1)
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36.1" "build-tools;36.0.0"
 
       - name: Download Spotify App Remote AAR
         run: |
