@@ -20,11 +20,22 @@ class ArtistDetailViewModel(
         private set
     var isLoading by mutableStateOf(false)
         private set
+    var error by mutableStateOf<String?>(null)
+        private set
 
     init {
+        load()
+    }
+
+    fun retry() = load()
+
+    private fun load() {
         viewModelScope.launch {
             isLoading = true
-            topTracks = runCatching { repository.loadArtistTopTracks(artistId) }.getOrDefault(emptyList())
+            error = null
+            runCatching { repository.loadArtistTopTracks(artistId) }
+                .onSuccess { topTracks = it }
+                .onFailure { error = it.message ?: "Couldn't load this artist" }
             isLoading = false
         }
     }

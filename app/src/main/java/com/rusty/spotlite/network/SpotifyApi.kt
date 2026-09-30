@@ -4,6 +4,7 @@ import com.rusty.spotlite.model.FollowedArtistsResponse
 import com.rusty.spotlite.model.PagingObject
 import com.rusty.spotlite.model.PlaylistTrackItem
 import com.rusty.spotlite.model.SavedTrack
+import com.rusty.spotlite.model.SearchResponse
 import com.rusty.spotlite.model.SimpleAlbum
 import com.rusty.spotlite.model.SimplifiedPlaylist
 import com.rusty.spotlite.model.TopTracksResponse
@@ -58,4 +59,11 @@ interface SpotifyApi {
         @Query("offset") offset: Int = 0,
         @Query("include_groups") includeGroups: String = "album,single",
     ): PagingObject<SimpleAlbum>
+
+    @GET("search")
+    suspend fun search(
+        @Query("q") query: String,
+        @Query("type") type: String = "playlist,artist,track",
+        @Query("limit") limit: Int = 10,
+    ): SearchResponse
 }

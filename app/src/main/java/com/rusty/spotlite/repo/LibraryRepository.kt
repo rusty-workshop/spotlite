@@ -10,6 +10,12 @@ data class Page<T>(val items: List<T>, val nextOffset: Int?)
 
 data class CursorPage<T>(val items: List<T>, val nextCursor: String?)
 
+data class SearchResults(
+    val playlists: List<SimplifiedPlaylist>,
+    val artists: List<Artist>,
+    val tracks: List<Track>,
+)
+
 private const val PAGE_SIZE = 50
 
 /**
@@ -50,4 +56,13 @@ class LibraryRepository(private val api: SpotifyApi) {
 
     suspend fun loadArtistTopTracks(artistId: String): List<Track> =
         api.getArtistTopTracks(artistId).tracks
+
+    suspend fun search(query: String): SearchResults {
+        val response = api.search(query)
+        return SearchResults(
+            playlists = response.playlists?.items.orEmpty(),
+            artists = response.artists?.items.orEmpty(),
+            tracks = response.tracks?.items.orEmpty(),
+        )
+    }
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rusty.spotlite.ui.common.ErrorRow
 import com.rusty.spotlite.ui.common.TrackRow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,15 +39,18 @@ fun ArtistDetailScreen(
             },
         )
 
-        if (viewModel.isLoading) {
-            Column(
+        val error = viewModel.error
+        when {
+            viewModel.isLoading -> Column(
                 modifier = Modifier.fillMaxWidth().padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 CircularProgressIndicator()
             }
-        } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+
+            error != null -> ErrorRow(error, onRetry = viewModel::retry)
+
+            else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(viewModel.topTracks, key = { it.id ?: it.uri }) { track ->
                     TrackRow(track, onClick = { viewModel.playTrack(track.uri) })
                 }

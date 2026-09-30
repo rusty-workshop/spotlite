@@ -13,6 +13,7 @@ import com.rusty.spotlite.AppContainer
 import com.rusty.spotlite.ui.ArtistDetailViewModelFactory
 import com.rusty.spotlite.ui.LibraryViewModelFactory
 import com.rusty.spotlite.ui.PlaylistDetailViewModelFactory
+import com.rusty.spotlite.ui.SearchViewModelFactory
 import com.rusty.spotlite.ui.artist.ArtistDetailScreen
 import com.rusty.spotlite.ui.artist.ArtistDetailViewModel
 import com.rusty.spotlite.ui.library.LibraryScreen
@@ -21,6 +22,8 @@ import com.rusty.spotlite.ui.login.LoginScreen
 import com.rusty.spotlite.ui.nowplaying.NowPlayingBar
 import com.rusty.spotlite.ui.playlist.PlaylistDetailScreen
 import com.rusty.spotlite.ui.playlist.PlaylistDetailViewModel
+import com.rusty.spotlite.ui.search.SearchScreen
+import com.rusty.spotlite.ui.search.SearchViewModel
 
 @Composable
 fun SpotliteNavHost(
@@ -43,6 +46,18 @@ fun SpotliteNavHost(
                 val viewModel: LibraryViewModel = viewModel(factory = LibraryViewModelFactory(container))
                 LibraryScreen(
                     viewModel = viewModel,
+                    onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name)) },
+                    onOpenArtist = { navController.navigate(Routes.artist(it.id, it.name)) },
+                    onPlayTrackUri = { container.playbackController.play(it) },
+                    onOpenSearch = { navController.navigate(Routes.SEARCH) },
+                )
+            }
+
+            composable(Routes.SEARCH) {
+                val viewModel: SearchViewModel = viewModel(factory = SearchViewModelFactory(container))
+                SearchScreen(
+                    viewModel = viewModel,
+                    onBack = { navController.popBackStack() },
                     onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name)) },
                     onOpenArtist = { navController.navigate(Routes.artist(it.id, it.name)) },
                     onPlayTrackUri = { container.playbackController.play(it) },

@@ -5,6 +5,7 @@ import android.net.Uri
 object Routes {
     const val LOGIN = "login"
     const val LIBRARY = "library"
+    const val SEARCH = "search"
     const val PLAYLIST_PATTERN = "playlist/{playlistId}/{playlistName}"
     const val ARTIST_PATTERN = "artist/{artistId}/{artistName}"
 
