@@ -1,12 +1,18 @@
 package com.rusty.spotlite.ui.nowplaying
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
@@ -18,6 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rusty.spotlite.remote.NowPlaying
@@ -25,6 +34,7 @@ import com.rusty.spotlite.remote.NowPlaying
 // A static shape + Surface elevation reads as a "card floating above the list" for the
 // cost of one clip and one shadow draw per frame — negligible next to a scrolling list.
 private val NowPlayingBarShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+private const val ART_SIZE_DP = 40
 
 @Composable
 fun NowPlayingBar(
@@ -45,6 +55,7 @@ fun NowPlayingBar(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            MiniArt(nowPlaying.albumArt, modifier = Modifier.padding(end = 12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = nowPlaying.trackName,
@@ -72,6 +83,31 @@ fun NowPlayingBar(
             IconButton(onClick = onOpenQueue) {
                 Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = "Queue")
             }
+        }
+    }
+}
+
+/**
+ * Renders the current track's art directly from the Bitmap App Remote hands back — no
+ * Coil involved, since this isn't a URL, it's a one-off in-memory image from the SDK.
+ */
+@Composable
+private fun MiniArt(bitmap: Bitmap?, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(ART_SIZE_DP.dp)
+            .clip(RoundedCornerShape(6.dp))
+            .background(MaterialTheme.colorScheme.surface),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier.size(ART_SIZE_DP.dp),
+            )
+        } else {
+            Icon(Icons.Filled.MusicNote, contentDescription = null, tint = Color.Gray)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.rusty.spotlite.remote
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,12 +9,16 @@ import com.rusty.spotlite.Config
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
+import com.spotify.protocol.types.Image
+import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.PlayerState
 
 data class NowPlaying(
+    val trackUri: String,
     val trackName: String,
     val artistName: String,
     val isPaused: Boolean,
+    val albumArt: Bitmap? = null,
 )
 
 /**
@@ -72,6 +77,7 @@ class PlaybackController(private val context: Context) {
         appRemote = null
         isConnected = false
         nowPlaying = null
+        artLoadedForTrackUri = null
     }
 
     fun play(uri: String) {
@@ -96,14 +102,35 @@ class PlaybackController(private val context: Context) {
         appRemote?.playerApi?.skipPrevious()
     }
 
+    // Tracks which track's art is already loaded/loading so a slow fetch for a track the
+    // user has since skipped past can't land late and overwrite the current one's art.
+    private var artLoadedForTrackUri: String? = null
+
     private fun subscribeToPlayerState(remote: SpotifyAppRemote) {
         remote.playerApi.subscribeToPlayerState().setEventCallback { state: PlayerState ->
             val track = state.track
+            val previous = nowPlaying
             nowPlaying = if (track == null) null else NowPlaying(
+                trackUri = track.uri,
                 trackName = track.name,
                 artistName = track.artist?.name.orEmpty(),
                 isPaused = state.isPaused,
+                // Keep the art we already have across pause/resume/seek events for the
+                // same track — only a genuine track change should trigger a refetch.
+                albumArt = previous?.takeIf { it.trackUri == track.uri }?.albumArt,
             )
+            if (track != null && track.imageUri != null && artLoadedForTrackUri != track.uri) {
+                loadAlbumArt(remote, track.uri, track.imageUri)
+            }
+        }
+    }
+
+    private fun loadAlbumArt(remote: SpotifyAppRemote, trackUri: String, imageUri: ImageUri) {
+        artLoadedForTrackUri = trackUri
+        remote.imagesApi.getImage(imageUri, Image.Dimension.SMALL).setResultCallback { bitmap ->
+            if (nowPlaying?.trackUri == trackUri) {
+                nowPlaying = nowPlaying?.copy(albumArt = bitmap)
+            }
         }
     }
 }

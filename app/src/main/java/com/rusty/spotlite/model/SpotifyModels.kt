@@ -9,6 +9,9 @@ data class ImageObject(
     val width: Int? = null,
 )
 
+/** Largest image Spotify offers for this item — used for hero art, where Thumbnail's "smallest" bias would look blurry blown up. */
+fun List<ImageObject>.largestUrl(): String? = maxByOrNull { it.width ?: 0 }?.url
+
 @Serializable
 data class PagingObject<T>(
     val items: List<T>,

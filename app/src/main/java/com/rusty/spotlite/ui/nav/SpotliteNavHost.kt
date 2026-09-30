@@ -16,6 +16,7 @@ import com.rusty.spotlite.ui.PlaylistDetailViewModelFactory
 import com.rusty.spotlite.ui.SearchViewModelFactory
 import com.rusty.spotlite.ui.artist.ArtistDetailScreen
 import com.rusty.spotlite.ui.artist.ArtistDetailViewModel
+import com.rusty.spotlite.model.largestUrl
 import com.rusty.spotlite.ui.common.ConnectionErrorBanner
 import com.rusty.spotlite.ui.library.LibraryScreen
 import com.rusty.spotlite.ui.library.LibraryViewModel
@@ -53,8 +54,12 @@ fun SpotliteNavHost(
                 val viewModel: LibraryViewModel = viewModel(factory = LibraryViewModelFactory(container))
                 LibraryScreen(
                     viewModel = viewModel,
-                    onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name, it.uri)) },
-                    onOpenArtist = { navController.navigate(Routes.artist(it.id, it.name)) },
+                    onOpenPlaylist = {
+                        navController.navigate(Routes.playlist(it.id, it.name, it.uri, it.images.largestUrl()))
+                    },
+                    onOpenArtist = {
+                        navController.navigate(Routes.artist(it.id, it.name, it.images.largestUrl()))
+                    },
                     onPlayTrackUri = { container.playbackController.play(it) },
                     onAddToQueueUri = { container.playbackController.addToQueue(it) },
                     onOpenSearch = { navController.navigate(Routes.SEARCH) },
@@ -66,8 +71,12 @@ fun SpotliteNavHost(
                 SearchScreen(
                     viewModel = viewModel,
                     onBack = { navController.popBackStack() },
-                    onOpenPlaylist = { navController.navigate(Routes.playlist(it.id, it.name, it.uri)) },
-                    onOpenArtist = { navController.navigate(Routes.artist(it.id, it.name)) },
+                    onOpenPlaylist = {
+                        navController.navigate(Routes.playlist(it.id, it.name, it.uri, it.images.largestUrl()))
+                    },
+                    onOpenArtist = {
+                        navController.navigate(Routes.artist(it.id, it.name, it.images.largestUrl()))
+                    },
                     onPlayTrackUri = { container.playbackController.play(it) },
                     onAddToQueueUri = { container.playbackController.addToQueue(it) },
                 )
@@ -85,11 +94,13 @@ fun SpotliteNavHost(
                 val playlistId = backStackEntry.arguments?.getString("playlistId").orEmpty()
                 val playlistName = backStackEntry.arguments?.getString("playlistName").orEmpty()
                 val playlistUri = backStackEntry.arguments?.getString("playlistUri").orEmpty()
+                val playlistImageUrl = Routes.decodeImageUrl(backStackEntry.arguments?.getString("playlistImageUrl"))
                 val viewModel: PlaylistDetailViewModel = viewModel(
                     factory = PlaylistDetailViewModelFactory(container, playlistId, playlistUri),
                 )
                 PlaylistDetailScreen(
                     playlistName = playlistName,
+                    playlistImageUrl = playlistImageUrl,
                     viewModel = viewModel,
                     onBack = { navController.popBackStack() },
                 )
@@ -98,11 +109,13 @@ fun SpotliteNavHost(
             composable(Routes.ARTIST_PATTERN) { backStackEntry ->
                 val artistId = backStackEntry.arguments?.getString("artistId").orEmpty()
                 val artistName = backStackEntry.arguments?.getString("artistName").orEmpty()
+                val artistImageUrl = Routes.decodeImageUrl(backStackEntry.arguments?.getString("artistImageUrl"))
                 val viewModel: ArtistDetailViewModel = viewModel(
                     factory = ArtistDetailViewModelFactory(container, artistId),
                 )
                 ArtistDetailScreen(
                     artistName = artistName,
+                    artistImageUrl = artistImageUrl,
                     viewModel = viewModel,
                     onBack = { navController.popBackStack() },
                 )
