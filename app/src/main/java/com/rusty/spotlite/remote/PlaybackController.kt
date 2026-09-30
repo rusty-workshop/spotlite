@@ -55,7 +55,12 @@ class PlaybackController(private val context: Context) {
         }
         val params = ConnectionParams.Builder(Config.CLIENT_ID)
             .setRedirectUri(Config.REDIRECT_URI)
-            .showAuthView(false)
+            // true: lets Spotify show its "Allow Spotlite to connect?" prompt when this
+            // app hasn't been authorized for App Remote yet (first connection ever, or
+            // after the user revokes access) — with false, that prompt can never appear,
+            // so an unauthorized connection just fails outright instead of getting a
+            // chance to become authorized.
+            .showAuthView(true)
             .build()
 
         SpotifyAppRemote.connect(context, params, object : Connector.ConnectionListener {
@@ -78,7 +83,11 @@ class PlaybackController(private val context: Context) {
     private fun describe(throwable: Throwable): String = when (throwable.javaClass.simpleName) {
         "CouldNotFindSpotifyApp" -> "Spotify isn't installed — install it to play tracks."
         "NotLoggedInException" -> "Open Spotify and log in, then try again."
-        "UserNotAuthorizedException" -> "Spotify Premium is required to control playback."
+        // Not necessarily a Premium issue — this fires whenever Spotify hasn't granted
+        // App Remote access yet. showAuthView(true) above should make the "Allow
+        // Spotlite to connect?" prompt appear so this resolves itself; if it keeps
+        // happening, Premium actually is required for App Remote control specifically.
+        "UserNotAuthorizedException" -> "Spotify hasn't authorized Spotlite yet — allow access when prompted, or open Spotify and check Premium status."
         "SpotifyDisconnectedException", "SpotifyConnectionTerminatedException" -> "Lost connection to Spotify."
         else -> throwable.message ?: "Couldn't connect to Spotify."
     }
