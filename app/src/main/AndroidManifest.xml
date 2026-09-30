@@ -18,16 +18,14 @@
         android:theme="@style/Theme.Spotlite"
         android:supportsRtl="true">
 
+        <!-- No launcher intent-filter here — that lives on the activity-aliases below,
+             exactly one of which is enabled at a time, so the home screen icon can be
+             switched (see icon/AppIconManager.kt) without needing separate app builds. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Spotlite">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
             <!-- PKCE login redirect: accounts.spotify.com sends the browser
                  back here with the authorization code. -->
             <intent-filter>
@@ -37,6 +35,71 @@
                 <data android:scheme="spotlite" android:host="callback" />
             </intent-filter>
         </activity>
+
+        <activity-alias
+            android:name="com.rusty.spotlite.icon.IconClassic"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.rusty.spotlite.icon.IconMidnight"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_midnight"
+            android:roundIcon="@mipmap/ic_launcher_midnight"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.rusty.spotlite.icon.IconSunset"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_sunset"
+            android:roundIcon="@mipmap/ic_launcher_sunset"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.rusty.spotlite.icon.IconOcean"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_ocean"
+            android:roundIcon="@mipmap/ic_launcher_ocean"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="com.rusty.spotlite.icon.IconNoir"
+            android:targetActivity=".MainActivity"
+            android:icon="@mipmap/ic_launcher_noir"
+            android:roundIcon="@mipmap/ic_launcher_noir"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
     </application>
 </manifest>

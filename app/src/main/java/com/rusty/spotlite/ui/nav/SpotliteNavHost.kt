@@ -30,6 +30,9 @@ import com.rusty.spotlite.ui.queue.QueueScreen
 import com.rusty.spotlite.ui.queue.QueueViewModel
 import com.rusty.spotlite.ui.search.SearchScreen
 import com.rusty.spotlite.ui.search.SearchViewModel
+import com.rusty.spotlite.ui.IconSettingsViewModelFactory
+import com.rusty.spotlite.ui.settings.IconSettingsScreen
+import com.rusty.spotlite.ui.settings.IconSettingsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -67,6 +70,7 @@ fun SpotliteNavHost(
                     onPlayTrackUri = { container.playbackController.play(it) },
                     onAddToQueueUri = { container.playbackController.addToQueue(it) },
                     onOpenSearch = { navController.navigate(Routes.SEARCH) },
+                    onOpenSettings = { navController.navigate(Routes.ICON_SETTINGS) },
                     onLogout = {
                         scope.launch {
                             container.playbackController.disconnect()
@@ -92,6 +96,14 @@ fun SpotliteNavHost(
                     },
                     onPlayTrackUri = { container.playbackController.play(it) },
                     onAddToQueueUri = { container.playbackController.addToQueue(it) },
+                )
+            }
+
+            composable(Routes.ICON_SETTINGS) {
+                val viewModel: IconSettingsViewModel = viewModel(factory = IconSettingsViewModelFactory(container))
+                IconSettingsScreen(
+                    viewModel = viewModel,
+                    onBack = { navController.popBackStack() },
                 )
             }
 

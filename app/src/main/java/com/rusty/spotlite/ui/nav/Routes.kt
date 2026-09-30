@@ -9,6 +9,7 @@ object Routes {
     const val LIBRARY = "library"
     const val SEARCH = "search"
     const val QUEUE = "queue"
+    const val ICON_SETTINGS = "settings/icon"
     const val PLAYLIST_PATTERN = "playlist/{playlistId}/{playlistName}/{playlistUri}/{playlistImageUrl}"
     const val ARTIST_PATTERN = "artist/{artistId}/{artistName}/{artistImageUrl}"
 

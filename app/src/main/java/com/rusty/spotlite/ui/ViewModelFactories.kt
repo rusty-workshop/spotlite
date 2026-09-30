@@ -8,6 +8,7 @@ import com.rusty.spotlite.ui.library.LibraryViewModel
 import com.rusty.spotlite.ui.playlist.PlaylistDetailViewModel
 import com.rusty.spotlite.ui.queue.QueueViewModel
 import com.rusty.spotlite.ui.search.SearchViewModel
+import com.rusty.spotlite.ui.settings.IconSettingsViewModel
 
 class LibraryViewModelFactory(private val container: AppContainer) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
@@ -55,4 +56,10 @@ class QueueViewModelFactory(private val container: AppContainer) : ViewModelProv
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
         QueueViewModel(container.libraryRepository) as T
+}
+
+class IconSettingsViewModelFactory(private val container: AppContainer) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        IconSettingsViewModel(container.appIconManager) as T
 }

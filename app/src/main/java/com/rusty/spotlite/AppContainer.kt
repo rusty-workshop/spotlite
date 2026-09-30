@@ -3,6 +3,7 @@ package com.rusty.spotlite
 import android.content.Context
 import com.rusty.spotlite.auth.AuthRepository
 import com.rusty.spotlite.data.TokenStore
+import com.rusty.spotlite.icon.AppIconManager
 import com.rusty.spotlite.network.NetworkModule
 import com.rusty.spotlite.remote.PlaybackController
 import com.rusty.spotlite.repo.LibraryRepository
@@ -16,4 +17,5 @@ class AppContainer(context: Context) {
     val libraryRepository = LibraryRepository(api)
     val savedTracksStore = SavedTracksStore(api)
     val playbackController = PlaybackController(context.applicationContext)
+    val appIconManager = AppIconManager(context.applicationContext)
 }

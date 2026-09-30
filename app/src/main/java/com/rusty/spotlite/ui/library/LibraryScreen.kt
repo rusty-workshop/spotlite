@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +42,7 @@ fun LibraryScreen(
     onPlayTrackUri: (String) -> Unit,
     onAddToQueueUri: (String) -> Unit,
     onOpenSearch: () -> Unit,
+    onOpenSettings: () -> Unit,
     onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -63,6 +65,9 @@ fun LibraryScreen(
             actions = {
                 IconButton(onClick = onOpenSearch) {
                     Icon(Icons.Filled.Search, contentDescription = "Search")
+                }
+                IconButton(onClick = onOpenSettings) {
+                    Icon(Icons.Filled.Settings, contentDescription = "App icon settings")
                 }
                 IconButton(onClick = onLogout) {
                     Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Log out")
