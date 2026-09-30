@@ -33,7 +33,7 @@ fun Thumbnail(images: List<ImageObject>, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(THUMB_SIZE_DP.dp)
-            .clip(RoundedCornerShape(4.dp))
+            .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center,
     ) {
@@ -43,7 +43,9 @@ fun Thumbnail(images: List<ImageObject>, modifier: Modifier = Modifier) {
                 model = ImageRequest.Builder(context)
                     .data(url)
                     .size(THUMB_SIZE_DP * 2) // ~2x for density, never full-res
-                    .crossfade(false)
+                    // Only costs anything on a cache miss; cached rows (the common
+                    // case while scrolling) render instantly regardless.
+                    .crossfade(150)
                     .build(),
                 contentDescription = null,
                 modifier = Modifier.size(THUMB_SIZE_DP.dp),

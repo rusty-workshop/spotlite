@@ -11,9 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +32,7 @@ import com.rusty.spotlite.ui.common.InfiniteScrollHandler
 import com.rusty.spotlite.ui.common.Thumbnail
 import com.rusty.spotlite.ui.common.TrackRow
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
     viewModel: LibraryViewModel,
@@ -42,7 +44,7 @@ fun LibraryScreen(
     var selectedTab by remember { mutableStateOf(LibraryTab.PLAYLISTS) }
 
     Column(modifier = modifier.fillMaxSize()) {
-        TabRow(selectedTabIndex = selectedTab.ordinal) {
+        PrimaryTabRow(selectedTabIndex = selectedTab.ordinal) {
             LibraryTab.entries.forEach { tab ->
                 Tab(
                     selected = selectedTab == tab,
@@ -99,7 +101,7 @@ private fun PlaylistRow(playlist: SimplifiedPlaylist, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Thumbnail(images = playlist.images)
@@ -119,7 +121,7 @@ private fun ArtistRow(artist: Artist, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Thumbnail(images = artist.images)
