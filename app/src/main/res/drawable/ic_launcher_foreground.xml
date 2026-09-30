@@ -4,15 +4,24 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- A literal spotlight, playing on the app's name: a translucent beam cone
-         falling onto a lit circle, with the play mark sitting in the light. -->
+    <!-- A theatrical spotlight: soft ambient glow, a beam that falls off from a wide,
+         faint outer cone to a brighter core (layered flat triangles standing in for a
+         gradient), landing on a bright stage of light with the play mark front and center. -->
     <path
         android:fillColor="#FFFFFF"
-        android:fillAlpha="0.32"
-        android:pathData="M54,17 L33,60 L75,60 Z" />
+        android:fillAlpha="0.12"
+        android:pathData="M54,58 m-30,0 a30,30 0 1,0 60,0 a30,30 0 1,0 -60,0" />
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M34,64 A20,20 0 1,0 74,64 A20,20 0 1,0 34,64 Z" />
+        android:fillAlpha="0.18"
+        android:pathData="M54,14 L24,62 L84,62 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.4"
+        android:pathData="M54,14 L40,62 L68,62 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,64 m-21,0 a21,21 0 1,0 42,0 a21,21 0 1,0 -42,0" />
     <path
         android:fillColor="#121212"
         android:pathData="M47,56 L47,72 Q47,76 50.51,74.08 L65.49,65.92 Q69,64 65.49,62.08 L50.51,53.92 Q47,52 47,56 Z" />

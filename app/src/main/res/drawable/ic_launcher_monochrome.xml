@@ -5,16 +5,17 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
     <!-- Same spotlight mark as ic_launcher_foreground, flattened to one silhouette for
-         Android 13+ themed icons. Fill color is ignored — the system tints this to a
-         single theme color. Beam and circle are separate paths (they overlap, so combining
-         them with the triangle under one evenOdd fill would wrongly cancel that overlap
-         out); only the circle gets the play triangle cut out of it. -->
+         Android 13+ themed icons (no glow/falloff layering — themed mode applies its own
+         flat system tint, so the soft layers wouldn't read anyway). Fill color is ignored.
+         Beam and circle are separate paths (they overlap, so combining them with the
+         triangle under one evenOdd fill would wrongly cancel that overlap into a hole);
+         only the circle gets the play triangle cut out of it. -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,17 L33,60 L75,60 Z" />
+        android:pathData="M54,14 L24,62 L84,62 Z" />
     <path
         android:fillColor="#FFFFFF"
         android:fillType="evenOdd"
-        android:pathData="M34,64 A20,20 0 1,0 74,64 A20,20 0 1,0 34,64 Z
+        android:pathData="M54,64 m-21,0 a21,21 0 1,0 42,0 a21,21 0 1,0 -42,0
                            M47,56 L47,72 Q47,76 50.51,74.08 L65.49,65.92 Q69,64 65.49,62.08 L50.51,53.92 Q47,52 47,56 Z" />
 </vector>
