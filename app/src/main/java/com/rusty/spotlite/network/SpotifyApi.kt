@@ -8,7 +8,6 @@ import com.rusty.spotlite.model.SavedTrack
 import com.rusty.spotlite.model.SearchResponse
 import com.rusty.spotlite.model.SimpleAlbum
 import com.rusty.spotlite.model.SimplifiedPlaylist
-import com.rusty.spotlite.model.TopTracksResponse
 import com.rusty.spotlite.model.UserProfile
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -54,11 +53,10 @@ interface SpotifyApi {
         @Query("after") after: String? = null,
     ): FollowedArtistsResponse
 
-    @GET("artists/{id}/top-tracks")
-    suspend fun getArtistTopTracks(
-        @Path("id") artistId: String,
-        @Query("market") market: String = "from_token",
-    ): TopTracksResponse
+    // getArtistTopTracks / GET artists/{id}/top-tracks removed: Spotify's Feb 2026 API
+    // overhaul dropped this endpoint entirely with no replacement (confirmed against
+    // Spotify's own published changelog, not assumed) — see ArtistDetailViewModel, which
+    // no longer has a Top Tracks tab as a result.
 
     @GET("artists/{id}/albums")
     suspend fun getArtistAlbums(
@@ -75,15 +73,19 @@ interface SpotifyApi {
         @Query("limit") limit: Int = 10,
     ): SearchResponse
 
-    @GET("me/tracks/contains")
-    suspend fun checkSavedTracks(@Query("ids") commaSeparatedIds: String): List<Boolean>
+    // me/tracks[/contains] was replaced by a single generic me/library endpoint covering
+    // every content type (tracks, albums, shows, etc.) — it also now takes full Spotify
+    // URIs ("spotify:track:xyz") instead of bare IDs, unlike the old endpoints.
+    @GET("me/library/contains")
+    suspend fun checkSavedTracks(@Query("uris") commaSeparatedUris: String): List<Boolean>
 
-    // PUT requires a body even though Spotify only looks at `ids`; an empty JSON object satisfies that.
-    @PUT("me/tracks")
-    suspend fun saveTracks(@Query("ids") commaSeparatedIds: String, @Body body: Map<String, String> = emptyMap())
+    // PUT requires a body even though Spotify only looks at the `uris` query param; an
+    // empty JSON object satisfies OkHttp's "PUT must have a body" requirement.
+    @PUT("me/library")
+    suspend fun saveTracks(@Query("uris") commaSeparatedUris: String, @Body body: Map<String, String> = emptyMap())
 
-    @DELETE("me/tracks")
-    suspend fun removeTracks(@Query("ids") commaSeparatedIds: String)
+    @DELETE("me/library")
+    suspend fun removeTracks(@Query("uris") commaSeparatedUris: String)
 
     @GET("me/player/queue")
     suspend fun getQueue(): QueueResponse

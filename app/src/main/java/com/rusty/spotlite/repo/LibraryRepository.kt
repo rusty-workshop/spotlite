@@ -60,9 +60,6 @@ class LibraryRepository(private val api: SpotifyApi) {
         return Page(response.items.mapNotNull { it.track }, nextOffset)
     }
 
-    suspend fun loadArtistTopTracks(artistId: String): List<Track> =
-        api.getArtistTopTracks(artistId).tracks
-
     suspend fun loadArtistAlbums(artistId: String, offset: Int): Page<SimpleAlbum> {
         val response = api.getArtistAlbums(artistId, limit = PAGE_SIZE, offset = offset)
         val nextOffset = if (response.next != null) offset + PAGE_SIZE else null

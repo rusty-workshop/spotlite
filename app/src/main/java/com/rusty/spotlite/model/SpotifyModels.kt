@@ -115,11 +115,6 @@ data class FollowedArtistsResponse(
     val artists: CursorPagingObject<Artist>,
 )
 
-@Serializable
-data class TopTracksResponse(
-    val tracks: List<Track>,
-)
-
 // Spotify's /search response only includes the keys for the types actually requested,
 // so each field needs a default to cover the ones left out.
 @Serializable

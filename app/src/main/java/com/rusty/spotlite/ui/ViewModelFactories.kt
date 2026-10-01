@@ -41,7 +41,6 @@ class ArtistDetailViewModelFactory(
         ArtistDetailViewModel(
             container.libraryRepository,
             container.playbackController,
-            container.savedTracksStore,
             artistId,
         ) as T
 }
