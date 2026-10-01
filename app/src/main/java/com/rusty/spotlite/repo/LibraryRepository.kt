@@ -55,7 +55,7 @@ class LibraryRepository(private val api: SpotifyApi) {
     }
 
     suspend fun loadPlaylistTracks(playlistId: String, offset: Int): Page<Track> {
-        val response = api.getPlaylistTracks(playlistId, limit = PAGE_SIZE, offset = offset)
+        val response = api.getPlaylistItems(playlistId, limit = PAGE_SIZE, offset = offset)
         val nextOffset = if (response.next != null) offset + PAGE_SIZE else null
         return Page(response.items.mapNotNull { it.track }, nextOffset)
     }

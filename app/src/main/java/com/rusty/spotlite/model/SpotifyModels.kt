@@ -1,5 +1,6 @@
 package com.rusty.spotlite.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -77,7 +78,9 @@ data class Track(
 
 @Serializable
 data class PlaylistTrackItem(
-    val track: Track? = null,
+    // The /playlists/{id}/items endpoint (its predecessor /tracks is hard-deprecated,
+    // see SpotifyApi.getPlaylistItems) nests this under "item", not "track".
+    @SerialName("item") val track: Track? = null,
 )
 
 @Serializable

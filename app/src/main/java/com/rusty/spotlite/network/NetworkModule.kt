@@ -20,11 +20,7 @@ private const val LOG_TAG = "SpotliteApi"
 private class AuthInterceptor(private val authRepository: AuthRepository) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking { authRepository.getValidAccessToken() }
-        // TEMPORARY — logs the full token so it can be curl-tested directly against
-        // Spotify's API, bypassing our own HTTP client entirely, to isolate whether a 403
-        // is coming from Spotify's side or from something in our request. Remove this
-        // line in the very next commit after that test is done.
-        Log.d(LOG_TAG, "${chain.request().url} -> token present: ${token != null}, token: $token")
+        Log.d(LOG_TAG, "${chain.request().url} -> token present: ${token != null}")
         val request = chain.request().newBuilder().apply {
             if (token != null) addHeader("Authorization", "Bearer $token")
         }.build()

@@ -29,12 +29,16 @@ interface SpotifyApi {
         @Query("offset") offset: Int = 0,
     ): PagingObject<SimplifiedPlaylist>
 
-    @GET("playlists/{id}/tracks")
-    suspend fun getPlaylistTracks(
+    // Spotify hard-deprecated playlists/{id}/tracks — it now returns a bare 403 for apps
+    // registered after their cutover, with no scope or token issue to blame. The
+    // replacement endpoint is /items, and the nested object per entry is "item", not
+    // the old "track" key (confirmed against the real API response, not just docs).
+    @GET("playlists/{id}/items")
+    suspend fun getPlaylistItems(
         @Path("id") playlistId: String,
         @Query("limit") limit: Int = 50,
         @Query("offset") offset: Int = 0,
-        @Query("fields") fields: String = "items(track(id,name,uri,duration_ms,artists(id,name,uri),album(id,name,images))),next,total,limit,offset",
+        @Query("fields") fields: String = "items(item(id,name,uri,duration_ms,artists(id,name,uri),album(id,name,images))),next,total,limit,offset",
     ): PagingObject<PlaylistTrackItem>
 
     @GET("me/tracks")
