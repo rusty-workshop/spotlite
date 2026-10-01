@@ -2,6 +2,7 @@ package com.rusty.spotlite.remote
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,8 @@ import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.Image
 import com.spotify.protocol.types.ImageUri
 import com.spotify.protocol.types.PlayerState
+
+private const val LOG_TAG = "SpotliteRemote"
 
 /** Matches the Web API's repeat_state values (off/context/track), which App Remote mirrors as 0/1/2. */
 enum class RepeatMode { OFF, ALL, ONE }
@@ -53,6 +56,7 @@ class PlaybackController(private val context: Context) {
             onResult(true)
             return
         }
+        Log.d(LOG_TAG, "connect() attempting, clientId=${Config.CLIENT_ID.take(6)}..., redirectUri=${Config.REDIRECT_URI}")
         val params = ConnectionParams.Builder(Config.CLIENT_ID)
             .setRedirectUri(Config.REDIRECT_URI)
             // true: lets Spotify show its "Allow Spotlite to connect?" prompt when this
@@ -65,6 +69,7 @@ class PlaybackController(private val context: Context) {
 
         SpotifyAppRemote.connect(context, params, object : Connector.ConnectionListener {
             override fun onConnected(remote: SpotifyAppRemote) {
+                Log.d(LOG_TAG, "connect() succeeded")
                 appRemote = remote
                 isConnected = true
                 connectionError = null
@@ -74,6 +79,7 @@ class PlaybackController(private val context: Context) {
 
             override fun onFailure(throwable: Throwable) {
                 isConnected = false
+                Log.e(LOG_TAG, "connect() failed: ${throwable.javaClass.name}: ${throwable.message}", throwable)
                 connectionError = describe(throwable)
                 onResult(false)
             }
