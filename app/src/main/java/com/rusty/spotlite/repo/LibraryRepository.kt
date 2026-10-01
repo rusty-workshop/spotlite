@@ -5,6 +5,7 @@ import com.rusty.spotlite.model.SimpleAlbum
 import com.rusty.spotlite.model.SimplifiedPlaylist
 import com.rusty.spotlite.model.Track
 import com.rusty.spotlite.network.SpotifyApi
+import retrofit2.HttpException
 
 /** One page of results plus whatever's needed to fetch the next one. */
 data class Page<T>(val items: List<T>, val nextOffset: Int?)
@@ -55,7 +56,19 @@ class LibraryRepository(private val api: SpotifyApi) {
     }
 
     suspend fun loadPlaylistTracks(playlistId: String, offset: Int): Page<Track> {
-        val response = api.getPlaylistItems(playlistId, limit = PAGE_SIZE, offset = offset)
+        val response = try {
+            api.getPlaylistItems(playlistId, limit = PAGE_SIZE, offset = offset)
+        } catch (e: HttpException) {
+            // Spotify's Feb 2026 policy: third-party apps can only see track contents for
+            // playlists the user owns or collaborates on — any other playlist 403s here
+            // with no way around it, even with full scope and a valid token (confirmed
+            // against Spotify's own migration guide and matching reports from other
+            // open-source clients hitting the identical restriction).
+            if (e.code() == 403) {
+                throw Exception("Spotify only allows viewing tracks in playlists you own or collaborate on — this one belongs to someone else.")
+            }
+            throw e
+        }
         val nextOffset = if (response.next != null) offset + PAGE_SIZE else null
         return Page(response.items.mapNotNull { it.track }, nextOffset)
     }

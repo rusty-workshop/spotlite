@@ -45,8 +45,15 @@ fun SpotliteNavHost(
     val scope = rememberCoroutineScope()
 
     Column(modifier = modifier.fillMaxSize()) {
-        container.playbackController.connectionError?.let { message ->
-            ConnectionErrorBanner(message, onRetry = { container.playbackController.connect() })
+        // Gate on !isConnected too, not just connectionError — overlapping connect() calls
+        // (e.g. the automatic one on app start racing a manual Retry tap) can resolve their
+        // callbacks out of order, leaving a stale failure message set even after a later
+        // attempt actually succeeded. A live connection should never show a "can't connect"
+        // banner, regardless of what connectionError happens to hold.
+        if (!container.playbackController.isConnected) {
+            container.playbackController.connectionError?.let { message ->
+                ConnectionErrorBanner(message, onRetry = { container.playbackController.connect() })
+            }
         }
         NavHost(
             navController = navController,

@@ -43,6 +43,11 @@ data class NowPlaying(
 class PlaybackController(private val context: Context) {
 
     private var appRemote: SpotifyAppRemote? = null
+    // Guards against overlapping connect() calls (e.g. the automatic one on app start
+    // racing a manual Retry tap) — without this, two in-flight SDK connect attempts can
+    // have their callbacks resolve out of order, leaving stale failure state set even
+    // after a later attempt actually succeeded.
+    private var isConnecting = false
 
     var nowPlaying by mutableStateOf<NowPlaying?>(null)
         private set
@@ -56,6 +61,8 @@ class PlaybackController(private val context: Context) {
             onResult(true)
             return
         }
+        if (isConnecting) return
+        isConnecting = true
         Log.d(LOG_TAG, "connect() attempting, clientId=${Config.CLIENT_ID.take(6)}..., redirectUri=${Config.REDIRECT_URI}")
         val params = ConnectionParams.Builder(Config.CLIENT_ID)
             .setRedirectUri(Config.REDIRECT_URI)
@@ -70,6 +77,7 @@ class PlaybackController(private val context: Context) {
         SpotifyAppRemote.connect(context, params, object : Connector.ConnectionListener {
             override fun onConnected(remote: SpotifyAppRemote) {
                 Log.d(LOG_TAG, "connect() succeeded")
+                isConnecting = false
                 appRemote = remote
                 isConnected = true
                 connectionError = null
@@ -78,8 +86,11 @@ class PlaybackController(private val context: Context) {
             }
 
             override fun onFailure(throwable: Throwable) {
-                isConnected = false
+                isConnecting = false
                 Log.e(LOG_TAG, "connect() failed: ${throwable.javaClass.name}: ${throwable.message}", throwable)
+                // Don't let a failure callback (possibly stale, from an attempt a newer one
+                // already superseded) downgrade a connection that's actually live right now.
+                if (isConnected) return
                 connectionError = describe(throwable)
                 onResult(false)
             }
@@ -102,6 +113,7 @@ class PlaybackController(private val context: Context) {
         appRemote?.let { SpotifyAppRemote.disconnect(it) }
         appRemote = null
         isConnected = false
+        isConnecting = false
         nowPlaying = null
         artLoadedForTrackUri = null
     }

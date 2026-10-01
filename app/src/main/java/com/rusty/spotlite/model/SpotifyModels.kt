@@ -45,7 +45,10 @@ data class SimplifiedPlaylist(
     val name: String,
     val images: List<ImageObject> = emptyList(),
     val owner: SimplifiedOwner? = null,
-    val tracks: PlaylistTracksRef = PlaylistTracksRef(),
+    // Renamed from "tracks" in the same Feb 2026 overhaul that moved
+    // playlists/{id}/tracks to /items — confirmed against another working
+    // client's fields filter (it requests "items.total" here), not guessed.
+    @SerialName("items") val tracks: PlaylistTracksRef = PlaylistTracksRef(),
     val uri: String = "",
 )
 
